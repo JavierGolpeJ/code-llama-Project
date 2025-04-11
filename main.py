@@ -6,6 +6,5 @@ def chat_with_ollama(prompt):
             if line:
                 print(line)
 
-
 if __name__ == "__main__":
     chat_with_ollama("Tell me a joke.")
