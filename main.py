@@ -1,3 +1,4 @@
+import requests
 def chat_with_ollama(prompt):
     url = "http://localhost:11434/api/generate"
     data = {"model": "gemma3", "prompt": prompt, "stream": True}
