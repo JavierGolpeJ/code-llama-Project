@@ -1,16 +1,30 @@
-# This is a sample Python script.
+import requests
+import json
 
-# Press ⌃R to execute it or replace it with your code.
-# Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
+def run_model(prompt):
+    # URL of the Ollama model server (adjust as needed)
+    url = "http://localhost:11434/api/generate"
+
+    full_response = ""
+    data = {"model": "qwen2.5-coder:0.5b", "prompt": prompt, "stream": True}
+    with requests.post(url, json=data) as response:
+            for line in response.iter_lines():
+                    if line:
+                        json_line = json.loads(line.decode("utf-8"))
+                        full_response += json_line.get("response", "")
+                        if json_line.get("done", False):
+                            break
+    print(full_response)
+
+def get_code(file_name):
+    with open(file_name, "r") as file:
+        content = file.read()
+        print(content)
+    return content
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press ⌘F8 to toggle the breakpoint.
 
-
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+# Example usage:
+if __name__ == "__main__":
+    prompt_text = "i want you to make comments for this code:" + get_code("test-1.txt")
+    run_model(prompt_text)
