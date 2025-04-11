@@ -1,16 +1,11 @@
-# This is a sample Python script.
-
-# Press ⌃R to execute it or replace it with your code.
-# Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
-
-
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press ⌘F8 to toggle the breakpoint.
+def chat_with_ollama(prompt):
+    url = "http://localhost:11434/api/generate"
+    data = {"model": "gemma3", "prompt": prompt, "stream": True}
+    with requests.post(url, json=data, stream=True) as response:
+        for line in response.iter_lines():
+            if line:
+                print(line)
 
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+if __name__ == "__main__":
+    chat_with_ollama("Tell me a joke.")
