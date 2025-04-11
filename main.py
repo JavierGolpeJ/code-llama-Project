@@ -6,6 +6,7 @@ def read_file(filename_path):
     with open(filename_path, "r") as f:
         return f.read()
 
+
 def run_model(prompt):
     # URL of the Ollama model server (adjust as needed)
     url = "http://localhost:11434/api/generate"
@@ -20,6 +21,7 @@ def run_model(prompt):
                 if json_line.get("done", False):
                     break
     print(full_response)
+
 
 if __name__ == "__main__":
     run_model(read_file("code_files/code1.txt"))
