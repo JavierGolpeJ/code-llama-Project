@@ -179,3 +179,21 @@ def adjust_excelsheet_column_widths(dataframe, worksheet):
             max_len = 13
 
         worksheet.set_column(idx, idx, max_len)  # set column width
+
+
+def fibonacci_sequence(n):
+    a, b = 0, 1
+    if n <= 0:
+        return []
+    elif n == 1:
+        return [0]
+    else:
+        result = [0, 1]
+        while len(result) < n:
+            next_num = a + b
+            if next_num < n:
+                result.append(next_num)
+                a, b = b, next_num
+            else:
+                break
+        return result
