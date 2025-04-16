@@ -1,0 +1,23 @@
+give me code comments for this code in this format at the top of each function:
+    @param
+    @feature
+    @return
+
+    code starts here:
+    def fibonacci_sequence(n):
+    a, b = 0, 1
+    if n <= 0:
+        return []
+    elif n == 1:
+        return [0]
+    else:
+        result = [0, 1]
+        while len(result) < n:
+            next_num = a + b
+            if next_num < n:
+                result.append(next_num)
+                a, b = b, next_num
+            else:
+                break
+        return result
+    """
