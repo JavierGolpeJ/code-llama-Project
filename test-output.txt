@@ -1,0 +1,41 @@
+Okay, here's a breakdown of each method in the `ArrayQueue` class, following your specified structure:
+
+**`enqueue(T data)`**
+@param {data}; {The data to be added to the back of the queue.}
+@return {data}; {The data that was just added to the back of the queue.}
+Overview: Adds an element to the back of the queue. If the queue is full, it expands the backing array.
+Comments: This method adds a new element to the rear of the queue. If the queue is full, it will expand its backing array and then insert the data.
+
+**`dequeue()`**
+@param {data}; {The data formerly located at the front of the queue.}
+@return {data}; {The data that was removed from the front of the queue.}
+@throws {java.util.NoSuchElementException}; {If the queue is empty.}
+Overview: Removes and returns the data from the front of the queue.
+Comments: This method removes and returns the data from the front of the queue. If the front has reached the end of the array, it will reset the front index to zero.
+
+**`peek()`**
+@param {data}; {The data located at the front of the queue.}
+@return {data}; {The data located at the front of the queue.}
+@throws {java.util.NoSuchElementException}; {If the queue is empty.}
+Overview: Returns the data from the front of the queue without removing it.
+Comments: This method returns a reference to the object that is currently located at the front of the queue.
+
+**`getBackingArray()`**
+@return {backingArray}; {The backing array of the queue.}
+Overview: Returns the backing array used by the queue.  This is for testing/grading purposes.
+Comments: This is a getter method that returns the backing array.  Note that this method should not be modified.
+
+**`expand()`**
+@return {None}; {None}
+Overview: Expands the backing array by doubling its capacity.  Copies the elements to the beginning of the new array and resets the front to 0.
+Comments: This is a helper method which expands the backing array by adding INITIAL_CAPACITY to its current length. It copies elements from the old array to the new array and resets the front index to 0.
+
+**`size()`**
+@return {size}; {The size of the queue.}
+Overview: Returns the current number of elements in the queue.
+Comments: This method returns the size of the queue, which is the number of elements stored within the backing array.
+
+**`getFront()`**
+@return {front}; {The index of the front element in the backing array.}
+Overview: Returns the index of the front element in the backing array.
+Comments: This method returns the index of the front element in the backing array. Note that this method should not be modified.
