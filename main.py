@@ -38,13 +38,17 @@ def File_classifier(file_path):
             if stripped:  # ignore empty lines
                 count += 1
 
-    return "gemma3:12b" if count >= 150 else "gemma3"
+    if count >= 150:
+        return "gemma3:12b"
+    else:
+        return "gemma3"
+
+    # return "gemma3:12b" if count >= 150 else "gemma3"
 
 
-# main process
 if __name__ == "__main__":
     directory = "Code-text"
-    prompt = (
+    our_prompt = (
         "For each method in the given code write a general description of what the individual methods do as well as descriptions of the input and output parameters using the following structure \n"
         "{file name}\n"
         "{function name 1}\n@param {variable name}; {description}\n@return {variable name}; {description}\nOverview: {general function description}\nComments: {previous user comments}\n\n"
@@ -61,8 +65,7 @@ if __name__ == "__main__":
                 with open(full_path, "r", encoding="utf-8") as java_file:
                     contents = java_file.read()
 
-                # Determine model size
                 model = File_classifier(full_path)
 
                 # Run model with content
-                run_model(prompt, model, contents)
+                run_model(our_prompt, model, contents)
