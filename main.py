@@ -1,7 +1,45 @@
 import json
 import os
+import re
 import requests
+import time
 
+# regex patterns for Java
+class_pattern  = re.compile(r'^\s*(?:public\s+)?class\s+(\w+)')
+method_pattern = re.compile(
+    r'^\s*(?:public|protected|private)?\s*'          # visibility
+    r'(?:static\s+)?'                                 # optional static
+    r'[A-Za-z_<>\[\]]+\s+'                            # return type
+    r'(\w+)\s*\(.*\)\s*[{;]'                          # method name + params
+)
+
+def scrape_java_file(path):
+    """
+    Reads a .java file and returns a list of dicts:
+      [ { "class_name": ..., "methods": [ ... ] }, … ]
+    """
+    classes = []
+    current = None
+
+    with open(path, 'r', encoding='utf-8') as f:
+        for line in f:
+            cls = class_pattern.match(line)
+            if cls:
+                # start a new class entry
+                if current:
+                    classes.append(current)
+                current = {"class_name": cls.group(1), "methods": []}
+                continue
+
+            if current:
+                m = method_pattern.match(line)
+                if m:
+                    current["methods"].append(m.group(1))
+
+    # append last class if present
+    if current:
+        classes.append(current)
+    return classes
 
 #writes the LLM output to the text document
 def output_response_dock(ai_response):
@@ -12,6 +50,8 @@ def output_response_dock(ai_response):
 def run_model(prompt, model, in_file):
 # def run_model(prompt, model, function):
     # URL of the Ollama model server (adjust as needed)
+
+    start_time = time.time()
     url = "http://localhost:11434/api/generate"
 
     full_prompt = prompt + in_file
@@ -27,7 +67,11 @@ def run_model(prompt, model, in_file):
                     break
 
     # outputs to doc
+    #     print(full_response)
         output_response_dock(full_response)
+    end_time = time.time()
+    total_time = end_time - start_time
+    print(total_time)
 
 # takes the file in and only counts lines of actual code excluding developer commentary
 #if size of code is < 150 lines use smaller model
@@ -35,18 +79,23 @@ def run_model(prompt, model, in_file):
 def File_classifier(in_file):
     count = 0
 
-    with open(in_file, "r") as in_file:
+    with open(in_file, "r") as f:
 
-        for line in in_file:
-            if "//" in line  or "/*" in line or "*/" in line:
-                count = count
-            else:
-                count = count + 1
+        for line in f:
+            stripped = line.strip()
+            if stripped.startswith("//") or "/*" in stripped or "*/" in stripped:
+                continue
+            if stripped:  # ignore empty lines
+                count += 1
 
     if count >= 150:
-        return "Gemma3:12b"
-    else:
+        print(f"Lines in file: {count}")
         return "Gemma3:4b"
+    else:
+        print(f"Lines in file: {count}")
+        return "Gemma3:12b"
+        # return "qwen2.5-coder:0.5b"
+        # return "Gemma3:4b"
 
 # this is not function
 # this section of code that uses a forloop to iterate over the elements in the methods array and
@@ -54,8 +103,14 @@ def File_classifier(in_file):
 
 if __name__ == "__main__":
     directory = "Code-text"
-    our_prompt = "For each method in the given code write a general description of what the individual methods do as well as descriptions of the input and output parameters using the following structure \n{file name}\n{function name 1}\n@param {variable name}; {description}\n@return {variable name}; {description}\nOverview: {general function description}\nComments: {previous user comments}\n\n{function name 2}\n@param {variable name}; {description}\n@return {variable name}; {description}\nOverview: {general function description}\nComments: {previous user comments}\n\nInclude the original developer comments. We are not asking for suggestions or improvements, we are only asking for commentary explaining what the given code does. Must follow the given structure exactly. If you find yourself repeating the same thing over and over, move on to the next function."
-
+    our_prompt = (
+        "For each method in the given code write a general description of what the individual methods do as well as descriptions of the input and output parameters using the following structure \n"
+        "{file name}\n"
+        "{function name 1}\n@param {variable name}; {description}\n@return {variable name}; {description}\nOverview: {general function description}\nComments: {previous user comments}\n\n"
+        "{function name 2}\n@param {variable name}; {description}\n@return {variable name}; {description}\nOverview: {general function description}\nComments: {previous user comments}\n\n"
+        "Include the original developer comments. We are not asking for suggestions or improvements, we are only asking for commentary explaining what the given code does. Must follow the given structure exactly. If you find yourself repeating the same thing over and over, move on to the next function."
+    )
+    structure = {}
     # iterate over files in the code directory
     for dir_path, _, files in os.walk(directory):
         for file in files:
@@ -63,83 +118,19 @@ if __name__ == "__main__":
             if file.endswith(".java"):
                 #append the path
                 path = os.path.join(dir_path, file)
+
+                classes = scrape_java_file(path)
+                if classes:
+                    structure[path] = classes
+
+                with open(path, "r", encoding="utf-8") as java_file:
+                    content = java_file.read()
+
+                model = File_classifier(path)
+
                 #run the model
-                run_model(our_prompt, File_classifier(path), path)
+                run_model(our_prompt, model, content)
 
-
-# def get_all_functions(file_path):
-#     function_blocks = []
-#     with open(file_path, 'r') as file:
-#         lines = file.readlines()
-#
-#     inside_function = False
-#     current_function = []
-#     brace_count = 0
-#
-#     # Loop through every line in the file.
-#     for line in lines:
-#         stripped = line.strip()
-#
-#         # If not in a function, look for a potential function signature.
-#         # We check for common Java access modifiers and the presence of a parenthesis.
-#         if not inside_function and (
-#                 stripped.startswith("public") or stripped.startswith("private") or stripped.startswith(
-#                 "protected")) and "(" in stripped:
-#             # This is a potential start of a function.
-#             inside_function = True
-#             current_function.append(line)
-#             brace_count += line.count("{") - line.count("}")
-#             # If the opening brace is on the next line, we continue without any additional action.
-#             continue
-#
-#         # If already inside a function, add the line to the current function block.
-#         if inside_function:
-#             current_function.append(line)
-#             brace_count += line.count("{") - line.count("}")
-#
-#             # When brace_count returns to 0, we've found the end of the current function.
-#             if brace_count == 0:
-#                 function_blocks.append(''.join(current_function))
-#                 current_function = []
-#                 inside_function = False
-#
-#     return function_blocks
-
-
-# testing new main
-# if __name__ == "__main__":
-#     directory = "Code-text"
-#     # iterate over files in a directory that end with ".java"
-#     for dir_path, _, files in os.walk(directory):
-#         for file in files:
-#             if file.endswith(".java"):
-#                 path = os.path.join(dir_path, file)
-#                 functions = get_all_functions(path)
-#                 print(f"\nFunctions in {file}:")
-#                 for i, function in enumerate(functions, 1):
-#                     print(f"\nFunction {i}:\n{function}")
-#                     description(function, model, None)
-#                     # parameters(function, model, None)
-#                     # output(function, model, None)
-
-
-# Original main
-# if __name__ == "__main__":
-#     model = "codellama:7b"
-#     prompt_text = "Generate documentation for this code: "
-#     # function_array = None
-#     Context = None
-#     directory = 'Code-text'
-#
-#     function_array = extract_code_from_directory(directory)
-#     # print(function_array)
-#
-#     for filename, functions in function_array.items():
-#         print(f"\nFile: {filename}")
-#         for code in functions:
-#             print(f"  Header: {code}")
-#             output(code, model, None)
-#             run_model(prompt_text, model, code,Context)
-
-    # run_model(prompt_text, model, Context)
-    # print("model is done running...")
+    with open("structure.json", "w") as outfile:
+        json.dump(structure, outfile, indent=4)
+    print("Wrote class/method structure to structure.json")
