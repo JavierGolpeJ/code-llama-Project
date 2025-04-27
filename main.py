@@ -101,6 +101,31 @@ def File_classifier(in_file):
 # this section of code that uses a forloop to iterate over the elements in the methods array and
 # direct them to the proper processing chain via if statement
 
+
+def process_all_java(src_dir, dst_root="output"):
+    # make a root output directory
+    os.makedirs(dst_root, exist_ok=True)
+
+    for dirpath, _, files in os.walk(src_dir):
+        for fname in files:
+            if not fname.endswith(".java"):
+                continue
+
+            java_path = os.path.join(dirpath, fname)
+            structure = scrape_java_file(java_path)
+
+            # derive a per-file directory name, e.g. "Test1.java" → "Test1"
+            base = os.path.splitext(fname)[0]
+            # per_dir = os.path.join(dst_root, base)
+            # os.makedirs(per_dir, exist_ok=True)
+
+            # write out structure.json inside that directory
+            out_path = os.path.join(dst_root, f"{base}.json")
+            with open(out_path, "w", encoding="utf-8") as outfile:
+                json.dump(structure, outfile, indent=4)
+
+            print(f"Wrote {len(structure)} classes to {out_path}")
+
 if __name__ == "__main__":
     directory = "Code-text"
     our_prompt = (
@@ -112,25 +137,27 @@ if __name__ == "__main__":
     )
     structure = {}
     # iterate over files in the code directory
-    for dir_path, _, files in os.walk(directory):
-        for file in files:
-            #if the file is a java file
-            if file.endswith(".java"):
-                #append the path
-                path = os.path.join(dir_path, file)
+    # for dir_path, _, files in os.walk(directory):
+    #     for file in files:
+    #         #if the file is a java file
+    #         if file.endswith(".java"):
+    #             #append the path
+    #             path = os.path.join(dir_path, file)
+    #
+    #             classes = scrape_java_file(path)
+    #             if classes:
+    #                 structure[path] = classes
+    #
+    #             with open(path, "r", encoding="utf-8") as java_file:
+    #                 content = java_file.read()
+    #
+    #             model = File_classifier(path)
+    #
+    #             #run the model
+    #             run_model(our_prompt, model, content)
 
-                classes = scrape_java_file(path)
-                if classes:
-                    structure[path] = classes
+    process_all_java(src_dir='Code-text', dst_root='output')
 
-                with open(path, "r", encoding="utf-8") as java_file:
-                    content = java_file.read()
-
-                model = File_classifier(path)
-
-                #run the model
-                run_model(our_prompt, model, content)
-
-    with open("structure.json", "w") as outfile:
-        json.dump(structure, outfile, indent=4)
+    # with open("structure.json", "w") as outfile:
+    #     json.dump(structure, outfile, indent=4)
     print("Wrote class/method structure to structure.json")
