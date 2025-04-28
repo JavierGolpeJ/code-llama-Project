@@ -13,6 +13,59 @@ method_pattern = re.compile(
     r'(\w+)\s*\(.*\)\s*[{;]'                          # method name + params
 )
 
+def extract_methods_and_docs(java_text):
+    """
+    Given the full text of a Java file, return a list of tuples
+    (method_name, documentation_string, method_code_block).
+    """
+    entries = []
+    i = 0
+    lines = java_text.splitlines()
+    n = len(lines)
+
+    while i < n:
+        line = lines[i]
+        m = method_pattern.match(line)
+        if m:
+            method_name = m.group(1)
+            # look backwards for a Javadoc immediately above
+            doc = ""
+            j = i - 1
+            if j >= 0 and lines[j].strip().endswith("*/"):
+                # scan upward until start of /**
+                doc_lines = []
+                while j >= 0:
+                    doc_lines.append(lines[j])
+                    if '/**' in lines[j]:
+                        break
+                    j -= 1
+                doc = "\n".join(reversed(doc_lines))
+                # strip the /* */ markers
+                doc = re.sub(r'^/\*\*|\*/$', '', doc, flags=re.MULTILINE).strip()
+
+            # now capture the full method block by counting braces
+            brace_count = 0
+            block_lines = []
+            # if the opening brace is on the signature line, start count at 1
+            if '{' in line:
+                brace_count = line.count('{') - line.count('}')
+                block_lines.append(line)
+            i += 1
+            # read until we've closed all braces
+            while i < n and brace_count > 0:
+                block_lines.append(lines[i])
+                brace_count += lines[i].count('{') - lines[i].count('}')
+                i += 1
+
+            entries.append((method_name, doc, "\n".join(block_lines)))
+            continue  # skip the i += 1 below, since we've advanced in the inner loop
+
+        i += 1
+
+    return entries
+
+
+
 def scrape_java_file(path):
     """
     Reads a .java file and returns a list of dicts:
@@ -102,29 +155,62 @@ def File_classifier(in_file):
 # direct them to the proper processing chain via if statement
 
 
-def process_all_java(src_dir, dst_root="output"):
-    # make a root output directory
-    os.makedirs(dst_root, exist_ok=True)
+def process_java_file(path):
+    """
+    Reads a .java file, extracts its class name and all methods,
+    then returns a list of dicts in the format you specified.
+    """
+    text = open(path, encoding='utf-8').read()
+    # find the first class declaration
+    cls_match = class_pattern.search(text)
+    class_name = cls_match.group(1) if cls_match else os.path.splitext(os.path.basename(path))[0]
 
+    results = []
+    for method_name, doc, block in extract_methods_and_docs(text):
+        results.append({
+            "class name":    class_name,
+            "function":      method_name,
+            "func_documentation": doc,
+            "func_block":    block
+        })
+    return results
+
+def process_all_java(src_dir):
+    """
+    Walks src_dir for .java files, processes each,
+    and returns a single list of all method-entries.
+    """
+    all_entries = []
     for dirpath, _, files in os.walk(src_dir):
         for fname in files:
-            if not fname.endswith(".java"):
-                continue
+            if fname.endswith(".java"):
+                path = os.path.join(dirpath, fname)
+                all_entries.extend(process_java_file(path))
+    return all_entries
 
-            java_path = os.path.join(dirpath, fname)
-            structure = scrape_java_file(java_path)
-
-            # derive a per-file directory name, e.g. "Test1.java" → "Test1"
-            base = os.path.splitext(fname)[0]
-            # per_dir = os.path.join(dst_root, base)
-            # os.makedirs(per_dir, exist_ok=True)
-
-            # write out structure.json inside that directory
-            out_path = os.path.join(dst_root, f"{base}.json")
-            with open(out_path, "w", encoding="utf-8") as outfile:
-                json.dump(structure, outfile, indent=4)
-
-            print(f"Wrote {len(structure)} classes to {out_path}")
+# def process_all_java(src_dir, dst_root="output"):
+#     # make a root output directory
+#     os.makedirs(dst_root, exist_ok=True)
+#
+#     for dirpath, _, files in os.walk(src_dir):
+#         for fname in files:
+#             if not fname.endswith(".java"):
+#                 continue
+#
+#             java_path = os.path.join(dirpath, fname)
+#             structure = scrape_java_file(java_path)
+#
+#             # derive a per-file directory name, e.g. "Test1.java" → "Test1"
+#             base = os.path.splitext(fname)[0]
+#             # per_dir = os.path.join(dst_root, base)
+#             # os.makedirs(per_dir, exist_ok=True)
+#
+#             # write out structure.json inside that directory
+#             out_path = os.path.join(dst_root, f"{base}.json")
+#             with open(out_path, "w", encoding="utf-8") as outfile:
+#                 json.dump(structure, outfile, indent=4)
+#
+#             print(f"Wrote {len(structure)} classes to {out_path}")
 
 if __name__ == "__main__":
     directory = "Code-text"
@@ -156,7 +242,12 @@ if __name__ == "__main__":
                 #run the model
                 run_model(our_prompt, model, content)
 
-    process_all_java(src_dir='Code-text', dst_root='output')
+    # process_all_java(src_dir='Code-text', dst_root='output')
+
+    output = process_all_java("Code-text")
+    with open("methods.json", "w", encoding="utf-8") as f:
+        json.dump(output, f, indent=4)
+    print(f"Wrote {len(output)} method entries to methods.json")
 
     # with open("structure.json", "w") as outfile:
     #     json.dump(structure, outfile, indent=4)
