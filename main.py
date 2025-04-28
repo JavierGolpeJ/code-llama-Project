@@ -137,24 +137,24 @@ if __name__ == "__main__":
     )
     structure = {}
     # iterate over files in the code directory
-    # for dir_path, _, files in os.walk(directory):
-    #     for file in files:
-    #         #if the file is a java file
-    #         if file.endswith(".java"):
-    #             #append the path
-    #             path = os.path.join(dir_path, file)
-    #
-    #             classes = scrape_java_file(path)
-    #             if classes:
-    #                 structure[path] = classes
-    #
-    #             with open(path, "r", encoding="utf-8") as java_file:
-    #                 content = java_file.read()
-    #
-    #             model = File_classifier(path)
-    #
-    #             #run the model
-    #             run_model(our_prompt, model, content)
+    for dir_path, _, files in os.walk(directory):
+        for file in files:
+            #if the file is a java file
+            if file.endswith(".java"):
+                #append the path
+                path = os.path.join(dir_path, file)
+
+                classes = scrape_java_file(path)
+                if classes:
+                    structure[path] = classes
+
+                with open(path, "r", encoding="utf-8") as java_file:
+                    content = java_file.read()
+
+                model = File_classifier(path)
+
+                #run the model
+                run_model(our_prompt, model, content)
 
     process_all_java(src_dir='Code-text', dst_root='output')
 
