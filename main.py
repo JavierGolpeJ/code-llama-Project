@@ -7,10 +7,17 @@ import time
 # regex patterns for Java
 class_pattern  = re.compile(r'^\s*(?:public\s+)?class\s+(\w+)')
 method_pattern = re.compile(
-    r'^\s*(?:public|protected|private)?\s*'          # visibility
-    r'(?:static\s+)?'                                 # optional static
-    r'[A-Za-z_<>\[\]]+\s+'                            # return type
-    r'(\w+)\s*\(.*\)\s*[{;]'                          # method name + params
+r'''^
+        \s*
+        (?:public|protected|private)   # optional visibility
+        \s+
+        (?:static\s+)?                  # optional static
+        (?:[A-Za-z_<>\[\]]+\s+)?        # optional return type (catches constructors too)
+        (\w+)                           # method or constructor name
+        \s*\([^)]*\)                    # args in parentheses
+        \s*(?:\{)?\s*$                  # optional {, then end-of-line
+    ''',
+    re.VERBOSE
 )
 
 def extract_methods_and_docs(java_text):
@@ -251,4 +258,4 @@ if __name__ == "__main__":
 
     # with open("structure.json", "w") as outfile:
     #     json.dump(structure, outfile, indent=4)
-    print("Wrote class/method structure to structure.json")
+    # print("Wrote class/method structure to structure.json")
