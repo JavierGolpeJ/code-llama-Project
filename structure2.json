@@ -1,0 +1,98 @@
+[
+    {
+        "class_name": "Game",
+        "function": "windowClosing",
+        "documentation": "// \"playing\" indicates whether a game is running (true) or not (false).\n    //------------------------------------------------------------------//\n        // set db path\n    //-----------------Load Save Game (if any)--------------------------//\n                    //load board's state\n                    //set button's images\n                    //load timer's value\n                    //load mines value\n    //-------------------------------------------------//\n    //------------------------------------------------------------//\n        // Create a new board\n    //---------------------------------------------------------------//\n    //------------------------------------------------------------------------------//\n    //------------------------------------------------------------------------------//\n    //-------------------------GAME WON AND GAME LOST ---------------------------------//\n        //----------------------------------------------------------------//\n        //------MESSAGE-----------//\n        //-----STATISTICS-----------//\n        //--------BUTTONS----------//\n        //--------DIALOG-------------//",
+        "block_code": "public void windowClosing(java.awt.event.WindowEvent windowEvent) {\n                    dialog.dispose();\n                    newGame();\n            }"
+    },
+    {
+        "class_name": "Game",
+        "function": "windowClosing",
+        "documentation": "//----------------------------------------------------------------//\n        //------MESSAGE-----------//\n        //-----STATISTICS-----------//\n        //--------BUTTONS----------//\n        //--------DIALOG-------------//",
+        "block_code": "public void windowClosing(java.awt.event.WindowEvent windowEvent) {\n                    dialog.dispose();\n                    newGame();\n            }"
+    },
+    {
+        "class_name": "Game",
+        "function": "done",
+        "documentation": "//--------------------------------SCORE BOARD--------------------------------------//\n        //----------------------------------------------------------------//\n        //-----BEST TIMES--------//\n        //-----STATISTICS-----------//\n        //--------BUTTONS----------//\n        //--------DIALOG-------------//\n    //------------------------------------------------------------------------------//\n    // Shows the \"solution\" of the game.\n                // Is the cell still unrevealed\n                    // Get Neighbours\n                    // Is it a mine?\n                        //mine\n                // This cell is already flagged!\n                    // Is it correctly flagged?\n    //-------------------------------------------------------------------------//\n    //-------------------------------------------------------------------------//\n    //-------------------------------------------------------------------------//\n    //--------------------------------------------------------------------------//\n                // If a game is solved, the content of each Cell should match the value of its surrounding mines\n                // Compare the player's \"answer\" to the solution.\n                    //This cell is not solved yet\n    //Check the game to see if its finished or not\n    //----------------------------------------------------------------------/\n    /*\n     * If a player clicks on a zero, all surrounding cells (\"neighbours\") must revealed.\n     * This method is recursive: if a neighbour is also a zero, his neighbours must also be revealed.\n     */\n        // Columns\n            // Rows\n                // Only unrevealed cells need to be revealed.\n                    // Get the neighbours of the current (neighbouring) cell.\n                    // Reveal the neighbours of the current (neighbouring) cell\n                    // Is this (neighbouring) cell a \"zero\" cell itself?\n                        // Yes, give it a special color and recurse!\n                        // No, give it a boring gray color.\n    //-----------------------------------------------------------------------------//\n    //This function is called when clicked on closed button or exit\n                //save",
+        "block_code": "protected void done(){\n                           dialog.dispose();\n                       }"
+    },
+    {
+        "class_name": "Game",
+        "function": "actionPerformed",
+        "documentation": "//dont save\n    //-----------------------------------------------------------------------//",
+        "block_code": "public void actionPerformed(ActionEvent e) {\n        JMenuItem menuItem = (JMenuItem) e.getSource();\n\n        if (menuItem.getName().equals(\"New Game\"))\n        {\n            if (playing)\n            {\n                ImageIcon question = new ImageIcon(getClass().getResource(\"/resources/question.png\"));\n\n                Object[] options = {\"Quit and Start a New Game\",\"Restart\",\"Keep Playing\"};\n\n                int startNew = JOptionPane.showOptionDialog(null, \"What do you want to do with the game in progress?\",\n                                \"New Game\", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, question, options, options[2]);\n\n                switch(startNew)\n                {\n                    case JOptionPane.YES_OPTION:\n\n                        // Initialize the new game.\n                        newGame();\n                        score.incGamesPlayed();\n                        score.save();\n                        break;\n\n                    case JOptionPane.NO_OPTION:\n                        score.incGamesPlayed();\n                        score.save();\n                        restartGame();\n                        break;\n\n                    case JOptionPane.CANCEL_OPTION: break;\n                }\n            }\n        }\n\n        else if (menuItem.getName().equals(\"Exit\"))\n        {\n            windowClosing(null);\n        }\n\n        //Statistics\n        else\n        {\n            showScore();\n        }\n    }"
+    },
+    {
+        "class_name": "Game",
+        "function": "mousePressed",
+        "documentation": "//--------------------------------------------------------------------------//\n    //Mouse Click Listener\n        // start timer on first click\n            //Get the button's name\n            // Get coordinates (button.getName().equals(\"x,y\")).\n            // Get cell information.\n            // Left Click\n                    //Mine is clicked.\n                        //red mine\n                        // The player has clicked on a number.\n                            // Show all surrounding cells.\n            // Right Click\n                    //simple blue\n    //-------------------------RELATED TO SCORES----------------------//\n    //---------------------EMPTY FUNCTIONS-------------------------------//",
+        "block_code": "public void mousePressed(MouseEvent e) {\n    }"
+    },
+    {
+        "class_name": "Game",
+        "function": "mouseReleased",
+        "documentation": "",
+        "block_code": "public void mouseReleased(MouseEvent e) {\n    }"
+    },
+    {
+        "class_name": "Game",
+        "function": "mouseEntered",
+        "documentation": "",
+        "block_code": "public void mouseEntered(MouseEvent e) {\n    }"
+    },
+    {
+        "class_name": "Game",
+        "function": "mouseExited",
+        "documentation": "",
+        "block_code": "public void mouseExited(MouseEvent e) {\n    }"
+    },
+    {
+        "class_name": "Game",
+        "function": "windowOpened",
+        "documentation": "",
+        "block_code": "public void windowOpened(WindowEvent e) {\n    }"
+    },
+    {
+        "class_name": "Game",
+        "function": "windowClosed",
+        "documentation": "",
+        "block_code": "public void windowClosed(WindowEvent e) {\n    }"
+    },
+    {
+        "class_name": "Game",
+        "function": "windowIconified",
+        "documentation": "",
+        "block_code": "public void windowIconified(WindowEvent e) {\n    }"
+    },
+    {
+        "class_name": "Game",
+        "function": "windowDeiconified",
+        "documentation": "",
+        "block_code": "public void windowDeiconified(WindowEvent e) {\n    }"
+    },
+    {
+        "class_name": "Game",
+        "function": "windowActivated",
+        "documentation": "",
+        "block_code": "public void windowActivated(WindowEvent e) {\n    }"
+    },
+    {
+        "class_name": "Game",
+        "function": "windowDeactivated",
+        "documentation": "",
+        "block_code": "public void windowDeactivated(WindowEvent e) {\n    }"
+    },
+    {
+        "class_name": "Score",
+        "function": "getCurrentWinningStreak",
+        "documentation": "",
+        "block_code": "public int getCurrentWinningStreak(){\n        return currentWinningStreak;\n    }"
+    },
+    {
+        "class_name": "TimeComparator",
+        "function": "compare",
+        "documentation": "//--------------------------------------------------------//\n    //------------DATABASE--------------------------//\n    //------------POPULATE FROM DATABASE------------//\n            // cleanup resources, once after processing\n            //------------------------LOAD TIMES------------------//\n            // cleanup resources, once after processing\n            // and then finally close connection\n            //----------EMPTY SCORE TABLE------//\n            //----------EMPTY TIME TABLE------//\n            //--------------INSERT DATA INTO SCORE TABLE-----------//\n            //-------------------INSERT DATA INTO TIME TABLE-----------//\n            //---------------------------------------------------------//\n            // and then finally close connection\n    //--------------------------------------------------//\n    //---------------------------------------------------//",
+        "block_code": "public int compare(Time a, Time b) {\n            if (a.getTimeValue() > b.getTimeValue())\n                return 1;\n            else if (a.getTimeValue() < b.getTimeValue())\n                return -1;\n            else\n                return 0;\n        }"
+    }
+]

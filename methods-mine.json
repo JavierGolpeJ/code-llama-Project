@@ -1,0 +1,98 @@
+[
+    {
+        "class name": "Game",
+        "function": "windowClosing",
+        "func_documentation": "",
+        "func_block": "            public void windowClosing(java.awt.event.WindowEvent windowEvent) {\n                    dialog.dispose();\n                    newGame();\n            }"
+    },
+    {
+        "class name": "Game",
+        "function": "windowClosing",
+        "func_documentation": "",
+        "func_block": "            public void windowClosing(java.awt.event.WindowEvent windowEvent) {\n                    dialog.dispose();\n                    newGame();\n            }"
+    },
+    {
+        "class name": "Game",
+        "function": "done",
+        "func_documentation": "",
+        "func_block": "                       protected void done(){\n                           dialog.dispose();\n                       }"
+    },
+    {
+        "class name": "Game",
+        "function": "actionPerformed",
+        "func_documentation": "",
+        "func_block": "    public void actionPerformed(ActionEvent e) {\n        JMenuItem menuItem = (JMenuItem) e.getSource();\n\n        if (menuItem.getName().equals(\"New Game\"))\n        {\n            if (playing)\n            {\n                ImageIcon question = new ImageIcon(getClass().getResource(\"/resources/question.png\"));\n\n                Object[] options = {\"Quit and Start a New Game\",\"Restart\",\"Keep Playing\"};\n\n                int startNew = JOptionPane.showOptionDialog(null, \"What do you want to do with the game in progress?\",\n                                \"New Game\", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, question, options, options[2]);\n\n                switch(startNew)\n                {\n                    case JOptionPane.YES_OPTION:\n\n                        // Initialize the new game.\n                        newGame();\n                        score.incGamesPlayed();\n                        score.save();\n                        break;\n\n                    case JOptionPane.NO_OPTION:\n                        score.incGamesPlayed();\n                        score.save();\n                        restartGame();\n                        break;\n\n                    case JOptionPane.CANCEL_OPTION: break;\n                }\n            }\n        }\n\n        else if (menuItem.getName().equals(\"Exit\"))\n        {\n            windowClosing(null);\n        }\n\n        //Statistics\n        else\n        {\n            showScore();\n        }\n    }"
+    },
+    {
+        "class name": "Game",
+        "function": "mousePressed",
+        "func_documentation": "",
+        "func_block": "    public void mousePressed(MouseEvent e) {\n    }"
+    },
+    {
+        "class name": "Game",
+        "function": "mouseReleased",
+        "func_documentation": "",
+        "func_block": "    public void mouseReleased(MouseEvent e) {\n    }"
+    },
+    {
+        "class name": "Game",
+        "function": "mouseEntered",
+        "func_documentation": "",
+        "func_block": "    public void mouseEntered(MouseEvent e) {\n    }"
+    },
+    {
+        "class name": "Game",
+        "function": "mouseExited",
+        "func_documentation": "",
+        "func_block": "    public void mouseExited(MouseEvent e) {\n    }"
+    },
+    {
+        "class name": "Game",
+        "function": "windowOpened",
+        "func_documentation": "",
+        "func_block": "    public void windowOpened(WindowEvent e) {\n    }"
+    },
+    {
+        "class name": "Game",
+        "function": "windowClosed",
+        "func_documentation": "",
+        "func_block": "    public void windowClosed(WindowEvent e) {\n    }"
+    },
+    {
+        "class name": "Game",
+        "function": "windowIconified",
+        "func_documentation": "",
+        "func_block": "    public void windowIconified(WindowEvent e) {\n    }"
+    },
+    {
+        "class name": "Game",
+        "function": "windowDeiconified",
+        "func_documentation": "",
+        "func_block": "    public void windowDeiconified(WindowEvent e) {\n    }"
+    },
+    {
+        "class name": "Game",
+        "function": "windowActivated",
+        "func_documentation": "",
+        "func_block": "    public void windowActivated(WindowEvent e) {\n    }"
+    },
+    {
+        "class name": "Game",
+        "function": "windowDeactivated",
+        "func_documentation": "",
+        "func_block": "    public void windowDeactivated(WindowEvent e) {\n    }"
+    },
+    {
+        "class name": "Score",
+        "function": "getCurrentWinningStreak",
+        "func_documentation": "",
+        "func_block": "    public int getCurrentWinningStreak(){\n        return currentWinningStreak;\n    }"
+    },
+    {
+        "class name": "Score",
+        "function": "compare",
+        "func_documentation": "",
+        "func_block": "        public int compare(Time a, Time b) {\n            if (a.getTimeValue() > b.getTimeValue())\n                return 1;\n            else if (a.getTimeValue() < b.getTimeValue())\n                return -1;\n            else\n                return 0;\n        }"
+    }
+]
