@@ -2,7 +2,7 @@ import json
 import os
 import re
 import requests
-import time
+import time, random
 
 # regex patterns for Java
 class_pattern  = re.compile(r'^\s*(?:public\s+)?class\s+(\w+)')
@@ -195,29 +195,81 @@ def process_all_java(src_dir):
                 all_entries.extend(process_java_file(path))
     return all_entries
 
-# def process_all_java(src_dir, dst_root="output"):
-#     # make a root output directory
-#     os.makedirs(dst_root, exist_ok=True)
-#
-#     for dirpath, _, files in os.walk(src_dir):
-#         for fname in files:
-#             if not fname.endswith(".java"):
-#                 continue
-#
-#             java_path = os.path.join(dirpath, fname)
-#             structure = scrape_java_file(java_path)
-#
-#             # derive a per-file directory name, e.g. "Test1.java" → "Test1"
-#             base = os.path.splitext(fname)[0]
-#             # per_dir = os.path.join(dst_root, base)
-#             # os.makedirs(per_dir, exist_ok=True)
-#
-#             # write out structure.json inside that directory
-#             out_path = os.path.join(dst_root, f"{base}.json")
-#             with open(out_path, "w", encoding="utf-8") as outfile:
-#                 json.dump(structure, outfile, indent=4)
-#
-#             print(f"Wrote {len(structure)} classes to {out_path}")
+
+# 1) Define your library of prompt templates
+PROMPT_TEMPLATES = {
+    "zero_shot": (
+        "For each method in the given Java code, write a general description "
+        "of what it does, listing its @param and @return. "
+        "Include any original developer comments, but no suggestions.\n\n"
+        "{file_name}\n"   # we’ll .format() this
+        "{method_stub}"
+    ),
+
+    "few_shot": (
+        "Example 1:\n"
+        "  foo(int x)\n"
+        "  @param x; the input value\n"
+        "  @return int; the result doubled\n"
+        "  Overview: doubles the input value.\n"
+        "\n"
+        "Example 2:\n"
+        "  bar(String s)\n"
+        "  @param s; the input string\n"
+        "  @return String; uppercase version\n"
+        "  Overview: converts string to uppercase.\n"
+        "\n"
+        "Now document the methods in:\n"
+        "{file_name}\n"
+        "{method_stub}"
+    ),
+
+    "chain_of_thought": (
+        "We want to document Java methods. Let's think step by step:\n"
+        "1) Identify the method signature and its parameters.\n"
+        "2) Look for the Javadoc comment just above it.\n"
+        "3) List @param lines and @return line.\n"
+        "4) Write an Overview sentence.\n"
+        "\n"
+        "{file_name}\n"
+        "{method_stub}"
+    ),
+
+    "hybrid": (
+        # few-shot + CoT in one
+        "Example:\n"
+        "  Q: foo(int x) /** doubles x */  →\n"
+        "  1) param x; the input integer\n"
+        "  2) return int; x*2\n"
+        "  Overview: returns double the input\n"
+        "\n"
+        "Now you:\n"
+        "{file_name}\n"
+        "{method_stub}"
+    ),
+}
+
+# 2) A helper to build the prompt from one of those templates
+def build_prompt(path, methods, style="few_shot"):
+    # 2a) method_stub: join all methods into one blob
+    stub_lines = []
+    for name, doc, block in methods:
+        stub_lines.append(f"{name}({', '.join(re.findall(r'\\w+\\s+\\w+', block.splitlines()[0]))})")
+        # e.g. “push(int x)”
+        if doc:
+            stub_lines.append(doc.replace("\n", " "))
+        stub_lines.append("")  # blank line between methods
+    method_stub = "\n".join(stub_lines)
+
+    # 2b) take the filename only
+    file_name = os.path.basename(path)
+
+    # 2c) pick the template and substitute
+    template = PROMPT_TEMPLATES.get(style)
+    if not template:
+        raise ValueError(f"Unknown prompt style: {style}")
+
+    return template.format(file_name=file_name, method_stub=method_stub)
 
 if __name__ == "__main__":
     directory = "Code-text"
@@ -232,24 +284,31 @@ if __name__ == "__main__":
     # iterate over files in the code directory
     for dir_path, _, files in os.walk(directory):
         for file in files:
-            #if the file is a java file
-            if file.endswith(".java"):
-                #append the path
-                path = os.path.join(dir_path, file)
+            if not file.endswith(".java"):
+                continue
 
-                classes = scrape_java_file(path)
-                if classes:
-                    structure[path] = classes
+            path = os.path.join(dir_path, file)
+            content = open(path, encoding="utf-8").read()
 
-                with open(path, "r", encoding="utf-8") as java_file:
-                    content = java_file.read()
+            # extract your methods
+            methods = extract_methods_and_docs(content)
 
-                model = File_classifier(path)
+            if not methods:
+                continue
 
-                #run the model
-                run_model(our_prompt, model, content)
+            # classify file size → pick model
+            model = File_classifier(path)
 
-    # process_all_java(src_dir='Code-text', dst_root='output')
+            # 3) build the prompt in the style you want:
+            #    could be “zero_shot”, “few_shot”, “chain_of_thought” or “hybrid”
+            style = random.choice(["few_shot", "chain_of_thought", "zero_shot", "hybrid"])
+            print(f"Style used: {style}")
+            prompt = build_prompt(path, methods, style=style)
+
+            # 4) call your existing run_model
+            run_model(prompt, model, content)
+
+    # process_all_java(src_dir='Code-text', dst_root='output')ai
 
     output = process_all_java("Code-text")
     with open("methods.json", "w", encoding="utf-8") as f:
