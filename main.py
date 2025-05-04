@@ -4,6 +4,8 @@ import re
 import requests
 import time, random
 
+def random():
+    pass
 # regex patterns for Java
 class_pattern  = re.compile(r'^\s*(?:public\s+)?class\s+(\w+)')
 method_pattern = re.compile(
