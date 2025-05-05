@@ -95,17 +95,14 @@ def build_prompt(file_name, method_name, doc, block):
     if doc:
         stub += "\n" + doc.replace("\n", " ")
     full_prompt = (
-        "Example 1:\n"
-        "  foo(int x)\n"
-        "  @param x; the input value\n"
-        "  @return int; the result doubled\n"
-        "  Overview: doubles the input value.\n\n"
-        "Example 2:\n"
-        "  bar(String s)\n"
-        "  @param s; the input string\n"
-        "  @return String; uppercase version\n"
-        "  Overview: converts string to uppercase.\n\n"
-        f"Now document the method in:\n{file_name}\n{stub}"
+    "We want to document Java methods.we want them in the format below:\n"
+    "Example:\n"
+    "  Q: foo(int x) /** doubles x */  →\n"
+    "  1) param x; the input integer\n"
+    "  2) return int; x*2\n"
+    "  Overview: returns double the input\n"
+    "\n"
+    f"Now document the method in:\n{file_name}\n{stub}"
     )
     return full_prompt
 
