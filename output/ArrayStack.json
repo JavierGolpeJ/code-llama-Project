@@ -1,0 +1,14 @@
+[
+    {
+        "class_name": "ArrayStack",
+        "methods": [
+            "ArrayStack",
+            "push",
+            "pop",
+            "peek",
+            "getBackingArray",
+            "expand",
+            "size"
+        ]
+    }
+]

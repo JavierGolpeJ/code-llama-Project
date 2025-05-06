@@ -1,0 +1,107 @@
+[
+    {
+        "class name": "ArrayQueue",
+        "function": "ArrayQueue",
+        "func_documentation": "",
+        "func_block": "    public ArrayQueue() {\n        backingArray = (T[]) new Object[INITIAL_CAPACITY];\n        front = 0;\n        size = 0;\n    }",
+        "response": ""
+    },
+    {
+        "class name": "ArrayQueue",
+        "function": "enqueue",
+        "func_documentation": "",
+        "func_block": "    public void enqueue(T data) {\n        if (data == null) {\n            throw new IllegalArgumentException();\n        }\n       if (size == INITIAL_CAPACITY) {\n            expand();\n            backingArray[front + size] = data;\n            size++;\n            return;\n        }\n       if (size < INITIAL_CAPACITY && backingArray[INITIAL_CAPACITY - 1] != null) {\n            int backingIndx = -(INITIAL_CAPACITY - (front + size));\n            backingArray[backingIndx] = data;\n            size++;\n            return;\n        } else {\n            backingArray[front + size] = data;\n            size++;\n            return;\n        }\n    }",
+        "response": ""
+    },
+    {
+        "class name": "ArrayQueue",
+        "function": "dequeue",
+        "func_documentation": "",
+        "func_block": "    public T dequeue() {\n        if (size == 0) {\n            throw new NoSuchElementException();\n        }\n        T thisData = backingArray[front];\n        backingArray[front] = null;\n        if (front == backingArray.length - 1) {\n            System.out.println(backingArray.length);\n            System.out.println(front);\n            front = front % (backingArray.length - 1);\n        } else {\n            front++;\n        }\n        size--;\n        return thisData;\n    }",
+        "response": ""
+    },
+    {
+        "class name": "ArrayQueue",
+        "function": "peek",
+        "func_documentation": "",
+        "func_block": "    public T peek() {\n        if (size == 0) {\n            throw new NoSuchElementException();\n        }\n        return backingArray[front];\n    }",
+        "response": ""
+    },
+    {
+        "class name": "ArrayQueue",
+        "function": "getBackingArray",
+        "func_documentation": "",
+        "func_block": "    public T[] getBackingArray() {\n        // DO NOT MODIFY THIS METHOD!\n        return backingArray;\n    }",
+        "response": ""
+    },
+    {
+        "class name": "ArrayQueue",
+        "function": "expand",
+        "func_documentation": "",
+        "func_block": "    private void expand() {\n        T[] largerBackingArray = (T[]) new Object[backingArray.length * 2];\n        int counter = 0;\n        int newArrIndx = 0;\n        int currInd = front;\n        while (counter < backingArray.length) {\n            if (currInd == backingArray.length) {\n                currInd = 0;\n            }\n            largerBackingArray[newArrIndx] = backingArray[currInd];\n            counter++;\n            newArrIndx++;\n            currInd++;\n        }\n        backingArray = largerBackingArray;\n        front = 0;\n    }",
+        "response": ""
+    },
+    {
+        "class name": "ArrayQueue",
+        "function": "size",
+        "func_documentation": "",
+        "func_block": "    public int size() {\n        // DO NOT MODIFY THIS METHOD!\n        return size;\n    }",
+        "response": ""
+    },
+    {
+        "class name": "ArrayQueue",
+        "function": "getFront",
+        "func_documentation": "",
+        "func_block": "    public int getFront() {\n        // DO NOT MODIFY THIS METHOD!\n        return front;\n    }",
+        "response": ""
+    },
+    {
+        "class name": "ArrayStack",
+        "function": "ArrayStack",
+        "func_documentation": "",
+        "func_block": "    public ArrayStack() {\n        backingArray = (T[]) new Object[INITIAL_CAPACITY];\n        size = 0;\n    }",
+        "response": ""
+    },
+    {
+        "class name": "ArrayStack",
+        "function": "push",
+        "func_documentation": "",
+        "func_block": "    public void push(T data) {\n        if (data == null) {\n            throw new IllegalArgumentException();\n        }\n        if (size == 0) {\n            backingArray[0] = data;\n            size++;\n            return;\n        }\n        if (size == INITIAL_CAPACITY) {\n            expand();\n        }\n        backingArray[size] = data;\n        size++;\n    }",
+        "response": ""
+    },
+    {
+        "class name": "ArrayStack",
+        "function": "pop",
+        "func_documentation": "",
+        "func_block": "    public T pop() {\n        if (size == 0) {\n            throw new NoSuchElementException();\n        }\n        T thisData = backingArray[size - 1];\n        backingArray[size - 1] = null;\n        size--;\n        return thisData;\n    }",
+        "response": ""
+    },
+    {
+        "class name": "ArrayStack",
+        "function": "peek",
+        "func_documentation": "",
+        "func_block": "    public T peek() {\n        if (size == 0) {\n            throw new NoSuchElementException();\n        }\n        return backingArray[size - 1];\n    }",
+        "response": ""
+    },
+    {
+        "class name": "ArrayStack",
+        "function": "getBackingArray",
+        "func_documentation": "",
+        "func_block": "    public T[] getBackingArray() {\n        // DO NOT MODIFY THIS METHOD!\n        return backingArray;\n    }",
+        "response": ""
+    },
+    {
+        "class name": "ArrayStack",
+        "function": "expand",
+        "func_documentation": "",
+        "func_block": "    private void expand() {\n        T[] largerBackingArray = (T[]) new Object[backingArray.length * 2];\n        int currInd = 0;\n        while (currInd < backingArray.length) {\n            largerBackingArray[currInd] = backingArray[currInd];\n            currInd++;\n        }\n        backingArray = largerBackingArray;\n    }",
+        "response": ""
+    },
+    {
+        "class name": "ArrayStack",
+        "function": "size",
+        "func_documentation": "",
+        "func_block": "    public int size() {\n        // DO NOT MODIFY THIS METHOD!\n        return size;\n    }",
+        "response": ""
+    }
+]

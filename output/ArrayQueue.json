@@ -1,0 +1,15 @@
+[
+    {
+        "class_name": "ArrayQueue",
+        "methods": [
+            "ArrayQueue",
+            "enqueue",
+            "dequeue",
+            "peek",
+            "getBackingArray",
+            "expand",
+            "size",
+            "getFront"
+        ]
+    }
+]

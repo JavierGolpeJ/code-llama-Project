@@ -1,0 +1,104 @@
+[
+    {
+        "class name": "CombinatorialGenerator",
+        "function": "CombinatorialGenerator",
+        "func_documentation": "/**\n     * Constructs a new CombinatorialGenerator.\n     *\n     * @param beginnings A set of name beginnings.\n     * @param endings A set of name endings.",
+        "func_block": "    public CombinatorialGenerator(final @NonNull String[] beginnings, final @NonNull String[] endings) {\n        this(beginnings, null, endings);\n    }"
+    },
+    {
+        "class name": "CombinatorialGenerator",
+        "function": "CombinatorialGenerator",
+        "func_documentation": "/**\n     * Constructs a new CombinatorialGenerator.\n     *\n     * @param beginnings A set of name beginnings.\n     * @param middles A set of name middles.\n     * @param endings A set of name endings.\n     *\n     * @throws IllegalArgumentException\n     *         If the lists of beginnings or endings are null or empty.",
+        "func_block": "    public CombinatorialGenerator(final @NonNull String[] beginnings, final String[] middles, final @NonNull String[] endings) {\n\t\tif (beginnings.length == 0) {\n\t\t\tthrow new IllegalArgumentException(\"The array of beginnings must have at least one element. It is currently empty.\");\n\t\t}\n\n\t\tif (endings.length == 0) {\n\t\t\tthrow new IllegalArgumentException(\"The array of endings must have at least one element. It is currently empty.\");\n\t\t}\n\n\t\tsetBeginnings(beginnings);\n\t\tsetMiddles(middles);\n\t\tsetEndings(endings);\n    }"
+    },
+    {
+        "class name": "CombinatorialGenerator",
+        "function": "generate",
+        "func_documentation": "",
+        "func_block": "    public String generate(int maxLength) {\n\t\tsuper.validateMaxLength(maxLength);\n\t\tmaxLength = super.randomizeMaxLength(maxLength);\n\n        final var stringBuilder = new StringBuilder();\n\n        final var beginning = super.randomArrayElement(beginnings);\n\t\tstringBuilder.append(beginning);\n\n        if (middles.length != 0) {\n            while (stringBuilder.length() < maxLength) {\n\t\t\t\tstringBuilder.append(super.randomArrayElement(middles));\n            }\n        }\n\n        if (maxLength > 1) {\n        \tfinal var temp = super.randomArrayElement(endings);\n        \tstringBuilder.replace(maxLength - temp.length(), maxLength, temp);\n\t\t}\n\n        return super.capitalize(super.clean(stringBuilder));\n    }"
+    },
+    {
+        "class name": "CombinatorialGenerator",
+        "function": "setBeginnings",
+        "func_documentation": "/**\n\t * Sets a new set of beginnings.\n\t *\n\t * @param beginnings A set of beginnings.",
+        "func_block": "    public void setBeginnings(final @NonNull String[] beginnings) {\n\t\tif (beginnings.length == 0) {\n\t\t\tthrow new IllegalArgumentException(\"The array of beginnings must have at least one element. It is currently empty.\");\n\t\t}\n\n\t\tsuper.lowercaseAllElements(beginnings);\n\n\t\tthis.beginnings = beginnings;\n\t}"
+    },
+    {
+        "class name": "CombinatorialGenerator",
+        "function": "setMiddles",
+        "func_documentation": "/**\n\t * Sets a new set of middles.\n\t *\n\t * @param middles A set of middles.",
+        "func_block": "\tpublic void setMiddles(final String[] middles) {\n\t\tif (middles == null || middles.length == 0) {\n\t\t\tthis.middles = new String[0];\n\t\t\treturn;\n\t\t}\n\n\t\tsuper.lowercaseAllElements(middles);\n\n\t\tthis.middles = middles;\n\t}"
+    },
+    {
+        "class name": "CombinatorialGenerator",
+        "function": "setEndings",
+        "func_documentation": "/**\n\t * Sets a new set of endings.\n\t *\n\t * @param endings A set of endings.",
+        "func_block": "\tpublic void setEndings(final @NonNull String[] endings) {\n\t\tif (endings.length == 0) {\n\t\t\tthrow new IllegalArgumentException(\"The array of endings must have at least one element. It is currently empty.\");\n\t\t}\n\n\t\tsuper.lowercaseAllElements(endings);\n\n\t\tthis.endings = endings;\n\t}"
+    },
+    {
+        "class name": "ConsonantVowelGenerator",
+        "function": "ConsonantVowelGenerator",
+        "func_documentation": "/** Constructs a new ConsonantVowelGenerator.",
+        "func_block": "\tpublic ConsonantVowelGenerator() {\n\t\tsetConsonants(new String[] {\n\t\t\t\"al\", \"an\", \"ar\", \"as\", \"at\", \"ea\", \"ed\", \"en\", \"er\", \"es\", \"ha\", \"he\", \"hi\", \"in\", \"is\", \"it\",\n\t\t\t\"le\", \"me\", \"nd\", \"ne\", \"ng\", \"nt\", \"on\", \"or\", \"ou\", \"re\", \"se\", \"st\", \"te\", \"th\", \"ti\", \"to\",\n\t\t\t\"ve\", \"wa\", \"it\"\n\t\t});\n\n\t\tsetVowels(new String[] { \"a\", \"e\", \"i\", \"o\", \"u\", \"y\" });\n\t}"
+    },
+    {
+        "class name": "ConsonantVowelGenerator",
+        "function": "generate",
+        "func_documentation": "",
+        "func_block": "    public String generate(int maxLength) {\n\t\tsuper.validateMaxLength(maxLength);\n\t\tmaxLength = super.randomizeMaxLength(maxLength);\n\n        final var stringBuilder = new StringBuilder();\n\n        String temp;\n        while (stringBuilder.length() < maxLength) {\n            if (maxLength % 2 == 0) {\n\t\t\t\ttemp = super.randomArrayElement(vowels);\n            } else {\n            \ttemp = super.randomArrayElement(consonants);\n            }\n\n\t\t\tstringBuilder.append(temp);\n        }\n\n        while (stringBuilder.length() > maxLength) {\n        \tstringBuilder.deleteCharAt(stringBuilder.length() - 1);\n\t\t}\n\n        return super.capitalize(super.clean(stringBuilder));\n    }"
+    },
+    {
+        "class name": "ConsonantVowelGenerator",
+        "function": "setConsonants",
+        "func_documentation": "/**\n\t * Sets a new set of consonants.\n\t *\n\t * @param consonants A set of consonants.",
+        "func_block": "\tpublic void setConsonants(final @NonNull String[] consonants) {\n    \tif (consonants.length == 0) {\n    \t\tthrow new IllegalArgumentException(\"The array of consonants must have at least one element. It is currently empty.\");\n\t\t}\n\n\t\tsuper.lowercaseAllElements(consonants);\n\n    \tthis.consonants = consonants;\n\t}"
+    },
+    {
+        "class name": "ConsonantVowelGenerator",
+        "function": "setVowels",
+        "func_documentation": "/**\n\t * Sets a new set of vowels.\n\t *\n\t * @param vowels A set of vowels.",
+        "func_block": "    public void setVowels(final @NonNull String[] vowels) {\n\t\tif (consonants.length == 0) {\n\t\t\tthrow new IllegalArgumentException(\"The array of vowels must have at least one element. It is currently empty.\");\n\t\t}\n\n\t\tsuper.lowercaseAllElements(vowels);\n\n    \tthis.vowels = vowels;\n\t}"
+    },
+    {
+        "class name": "GrammarGenerator",
+        "function": "GrammarGenerator",
+        "func_documentation": "/**\n     * Constructs a GrammarGenerator.\n     *\n     * @param rules A set of Context Free Grammar rules.",
+        "func_block": "    public GrammarGenerator(final @NonNull List<String> rules) {\n        setRules(rules);\n    }"
+    },
+    {
+        "class name": "GrammarGenerator",
+        "function": "generate",
+        "func_documentation": "",
+        "func_block": "    public String generate(final int maxLength) {\n    \tsuper.validateMaxLength(maxLength);\n\n\t\tfinal var sb = new StringBuilder();\n\t\tsb.append(contextFreeGrammar.run());\n\t\tsb.setLength(Math.min(sb.length(), maxLength));\n\t\treturn super.capitalize(super.clean(sb));\n    }"
+    },
+    {
+        "class name": "GrammarGenerator",
+        "function": "setRules",
+        "func_documentation": "/**\n\t * Set a new set of rules.\n\t *\n\t * @param rules A set of Context Free Grammar rules.",
+        "func_block": "\tpublic void setRules(final @NonNull List<String> rules) {\n\t\tif (rules.size() == 0) {\n\t\t\tthrow new IllegalArgumentException(\"The list of rules must have at least one rule. It is currently empty.\");\n\t\t}\n\n\t\tcontextFreeGrammar = new ContextFreeGrammar(rules.toArray(new String[0]));\n\t}"
+    },
+    {
+        "class name": "MarkovGenerator",
+        "function": "MarkovGenerator",
+        "func_documentation": "/**\n     * Constructs a MarkovGenerator and trains it with a set of names.\n     *\n     * @param names A set of names.",
+        "func_block": "    public MarkovGenerator(final @NonNull String[] names) {\n\t\tif (names.length == 0) {\n\t\t\tthrow new IllegalArgumentException(\"The array of training names must have at least one element. It is currently empty.\");\n\t\t}\n\n\t\tfinal Map<String, Map<Character, Integer>> builders = new HashMap<>();\n\n\t\tfor (String string : names) {\n\t\t\tif (string.length() < 2) {\n\t\t\t\treturn;\n\t\t\t}\n\n\t\t\tstring = string.toLowerCase(Locale.ROOT);\n\n\t\t\tfor (int i = 2 ; i < string.length() ; i++) {\n\t\t\t\tfinal String charGroup = string.substring(i - 2, i);\n\t\t\t\tfinal char subsequentChar = string.charAt(i);\n\n\t\t\t\tbuilders.putIfAbsent(charGroup, new HashMap<>());\n\n\t\t\t\tbuilders.get(charGroup).putIfAbsent(subsequentChar, 0);\n\t\t\t\tbuilders.get(charGroup).put(string.charAt(i), builders.get(charGroup).get(subsequentChar) + 1);\n\t\t\t}\n\t\t}\n\n\t\tfor (final Map.Entry<String, Map<Character, Integer>> entry : builders.entrySet()) {\n\t\t\tentries.put(entry.getKey(), new Entry(entry.getValue()));\n\t\t}\n    }"
+    },
+    {
+        "class name": "MarkovGenerator",
+        "function": "generate",
+        "func_documentation": "",
+        "func_block": "    public String generate(int maxLength) {\n    \tsuper.validateMaxLength(maxLength);\n\n\t\t/*\n\t\t * Even a small Markov Chain is capable of generating long names, but\n\t\t * the names can be of a subjectively poor quality due to repetition\n\t\t * and length.\n\t\t *\n\t\t * e.g. Poor Quality Names\n\t\t *\n\t\t * \t\tRlasa\u00ecdhagaidhairidh\n\t\t * \t\tItirigiosaidhagsa\u00ecde\n\t\t * \t\tNsaireabalaileall\n\t\t * \t\tNanagaililiormailili\n\t\t * \t\tUnagaghreagagaghnait\n\t\t *\n\t\t * To generate names that are of a subjectively higher quality, we\n\t\t * randomize maxLength. This partially solves the issues of repetition\n\t\t * and length.\n\t\t *\n\t\t * We could allow maxLength randomization by users, but we want this\n\t\t * function to produce subjectively good results without needing to\n\t\t * know much about its internals.\n\t\t */\n\t\tmaxLength = super.randomizeMaxLength(maxLength);\n\n\t\tfinal var random = ThreadLocalRandom.current();\n\t\tfinal var sb = new StringBuilder();\n\t\tsb.append((String) entries.keySet().toArray()[random.nextInt(entries.size())]);\n\n\t\tfor (int i = 2 ; i < maxLength ; i++) {\n            final var substring = sb.substring(i - 2, i);\n\n\t\t\tfinal var entry = entries.get(substring);\n\t\t\tif (entry == null) {\n\t\t\t\tbreak;\n\t\t\t}\n\n\t\t\tsb.appendCodePoint(entry.randomCodePoint());\n        }\n\n        return super.capitalize(super.clean(sb));\n    }"
+    },
+    {
+        "class name": "MarkovGenerator",
+        "function": "Entry",
+        "func_documentation": "",
+        "func_block": "\t\tpublic Entry(final @NonNull Map<Character, Integer> occurrences) {\n\t\t\tcodePoints = new int[occurrences.size()];\n\t\t\tsums = new float[occurrences.size()];\n\n\t\t\tint index = 0;\n\t\t\tfloat cumulativeSum = 0;\n\n\t\t\tfor (final var entry : occurrences.entrySet()) {\n\t\t\t\tcodePoints[index] = entry.getKey();\n\n\t\t\t\tcumulativeSum += entry.getValue();\n\t\t\t\tsums[index] = cumulativeSum;\n\n\t\t\t\tindex++;\n\t\t\t}\n\t\t}"
+    },
+    {
+        "class name": "MarkovGenerator",
+        "function": "randomCodePoint",
+        "func_documentation": "",
+        "func_block": "\t\tpublic int randomCodePoint() {\n\t\t\t/*\n\t\t\t * This algorithm was inspired by the following StackExchange\n\t\t\t * answer:\n\t\t\t *\n\t\t\t * https://softwareengineering.stackexchange.com/a/150618\n\t\t\t */\n\t\t\tfinal var randomSum = ThreadLocalRandom.current().nextDouble(sums[sums.length - 1] + 0.01f);\n\n\t\t\tfor (int i = 0 ; i < sums.length ; i++) {\n\t\t\t\tif (randomSum <= sums[i]) {\n\t\t\t\t\treturn codePoints[i];\n\t\t\t\t}\n\t\t\t}\n\n\t\t\treturn 0;\n\t\t}"
+    }
+]
